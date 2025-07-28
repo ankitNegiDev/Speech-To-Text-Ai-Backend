@@ -64,3 +64,14 @@
 * `multer :` is for handeling and parsing file upload.Express can't read multipart/form-data directly so using multer we can parse file upload.
 * `cors :` is for allowing request from the frontend.
 * `dotenv :` to store the secret api's key and helps us manage environment variables like API keys, port numbers, and DB URIs securely.
+
+* now to install all these write this command
+
+    ```bash
+    npm install express cors dotenv multer
+    ```
+
+* once it is done then setup a database on the mongodb atlas and setup a basic server and setup .env file.
+
+* now i am doing one extra step here -- becaues i need to implement the authentication using clerk and also i want to show each user past transcription and i am planning to do like one guest user -- (a sample one that is loged in with default credientials which i will provide) and then i will put a check only loged in user can see past transcription and non-loged in user can see current one ---
+* now keep in mind -- if we are showing the past transcription then a route will be need like /api/pastTranscription something like..
