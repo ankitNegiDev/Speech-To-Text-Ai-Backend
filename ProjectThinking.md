@@ -2,6 +2,7 @@
 
 * first i am starting with backend once my backend is done then i can start with a simple ui that have upload audio functionality and show the text of uploaded audio that's it...
 
+```text
 Frontend
 │
 ├─ Record or upload the audio file
@@ -23,6 +24,8 @@ Backend (Express)
 Frontend
 ├─ Display transcription to user
 ├─ Show transcription history (optional)
+
+```
 
 * this is how overall flow will go.
 
