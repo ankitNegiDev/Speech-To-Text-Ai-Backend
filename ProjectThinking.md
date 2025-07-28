@@ -75,3 +75,46 @@
 
 * now i am doing one extra step here -- becaues i need to implement the authentication using clerk and also i want to show each user past transcription and i am planning to do like one guest user -- (a sample one that is loged in with default credientials which i will provide) and then i will put a check only loged in user can see past transcription and non-loged in user can see current one ---
 * now keep in mind -- if we are showing the past transcription then a route will be need like /api/pastTranscription something like..
+
+* now inorder - to upload audio file directly on cloud we need to use multer-storage-cloudinary npm package - multer-storage-cloudinary is a custom storage engine for multer that  Uploads files directly to Cloudinary No need to save to disk and upload manually.
+* if we only use multer then it will store the file (audio) only in our local system but we want this audio is accessible via a link and also in production (or modern apps) we directly upload files to a cloud service like Cloudinary s3 — not save them locally first.
+* If you only use multer then we would have to:
+  * Store the file locally
+  * Then manually upload it using Cloudinary's SDK
+  * Then delete the local file to save space
+* But with multer-storage-cloudinary: Everything is done in one step — file goes from frontend → multer → Cloudinary directly.
+
+* ### Code without using multer-storage-cloudinary
+
+  * Example without multer-storage-cloudinary
+
+    ```js
+    // First save the file locally
+    const upload = multer({ dest: 'uploads/' }); // this line simply tells multer to save the file in the destination folder which is -- uploads here dest is short for destination.
+
+    // here we are first parsing the incoming request using multer since content type is multi-part or form data so express can't handel it and for that we are using multer and since we know that multer also adds file info to req.file (for single) or req.files (for multiple) and then we are uploading it to the cloudinary.
+    router.post('/upload', upload.single('audio'), async (req, res) => {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "audio/video"
+    });
+
+    // Then you have to manually deleting the local file if we don't then there will be a time when our storage is filled completely and our server will be crashed.
+    fs.unlinkSync(req.file.path);
+
+    res.json({ url: result.secure_url }); // this sends Cloudinary's secure URL for the uploaded audio file back to the frontend.
+    });
+    ```
+
+* ### Code using multer-storage-cloudinary
+
+  * if we use multer-storage-cloudinary then we can directly upload file to cloudinary instead of saving it to locally.
+
+    ```js
+    router.post('/upload', upload.single('audio'), (req, res) => {
+    res.json({ url: req.file.path });
+    });
+    ```
+
+* ### setting up multer middleware
+
+  * now this is how we can setup multer middleware.
