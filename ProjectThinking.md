@@ -54,3 +54,13 @@
 * ### `step 3 : before doing any thing with the incoming post request data from frontend setup multer and parse the req.body to get file`
 
 * ### `step 4 : once incoming request is parsed then send the audio to speech text api and store the transcribe response into the db and send this to frontend as a response`
+
+---
+
+## Backend Documentation
+
+* now in backend we need `express , multer , cors , dotenv`
+* `express :` is for creating server and define routes (/upload).
+* `multer :` is for handeling and parsing file upload.Express can't read multipart/form-data directly so using multer we can parse file upload.
+* `cors :` is for allowing request from the frontend.
+* `dotenv :` to store the secret api's key and helps us manage environment variables like API keys, port numbers, and DB URIs securely.
