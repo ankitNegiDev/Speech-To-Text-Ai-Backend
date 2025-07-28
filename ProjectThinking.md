@@ -172,3 +172,142 @@
     ```bash
     Request → Router → Controller → Service → Repository → DB
     ```
+
+---
+
+* ## main logic to convert speech into text
+
+  * now to convert speech into text we are using assmebly ai sppech to text api and the additional feature is - we will give a kind of dropdown to user to select in which language he want to see the text -- like user upload english audio and he want to see it in hindi then we will give this functionality.
+
+  * so the flow will be like :
+
+    ```bash
+    Audio (English) → Transcription (English) → Translate → Show in Hindi/French/etc.
+    ```
+
+  * so to translate the transcribe text by assembly api we will use Google Translate API or LibreTranslate to translate text into that language which is choosed by user.
+  * means -- at first user upload any audio in any language we will show transcribe text in english -- and then user will have a option to convert that text from english to any other langauge.
+
+  * *Transcribe audio → (Always happens when user uploads audio)*
+
+  * *Translate text → (Only happens when user selects a language)*
+
+  * *So here we are technically calling two APIs but not at the same time. It's event-based and cleanly separated.*
+  * now for this we can do one thing -- we have a post route /upload for audio upload or record and this api endpoint will return the transcribed text which is fine.
+  * then we will create another route /translate or something that will reutrn the transcribed text in that langauge which is choosen by user that measn we need to send langauge info from the frontend to backend. and based on this selected langauge info we need to convert the transcribed text into that langauge using another api -- in backend.
+
+  * now first we will focus on the how we can convert the speech to text - using assembly api sdk.
+  * [official documentation of assembly ai api](https://www.assemblyai.com/products/speech-to-text)
+
+    ---
+
+* ### Steps to setup assembly ai api
+
+  * #### step 1 : install assemblyai
+
+    * first install the asseblyai using this command
+
+        ```bash
+        npm install assemblyai
+        ```
+
+  * #### step 2 : setup dotenv file
+
+    * get the api key from the assemblyai website after signup store that api key in the dotenv file.
+
+        ```env
+        ASSEMBLYAI_API_KEY=your_actual_api_key_here
+        ```
+
+  * #### step 3 : load the environment variable
+
+    * we can load the environment variable either in the server.js or in seprate file and then import it
+
+        ```js
+        import dotenv from 'dotenv';
+        dotenv.config();
+        export const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY;
+        ```
+
+  * #### step 4 : create a utility function using offical sdk
+
+    * once all the step are done now we can use official assembly ai sdk.
+
+        ```js
+        // utils/speechToText.js
+
+        import { AssemblyAI } from "assemblyai";
+
+        // Create a client using your API key
+        const client = new AssemblyAI({
+            apiKey: process.env.ASSEMBLYAI_API_KEY,
+        });
+
+        export async function speechToTextAPI(audioUrl) {
+        try {
+            const transcript = await client.transcripts.transcribe({
+                audio: audioUrl,
+                speech_model: "universal", // optional
+            });
+
+            return transcript.text;
+        } catch (error) {
+            console.error("AssemblyAI SDK Error:", error.message);
+            throw new Error("Failed to transcribe audio");
+        }
+        }
+        ```
+
+    * first import the assembly ai then create a client
+
+        ```js
+        const client = new AssemblyAI({
+            apiKey: process.env.ASSEMBLYAI_API_KEY,
+        });
+        ```
+
+    * this line create  a client instance that talks to assembly ai
+    * api key is loaded from the .env file.
+    * then create a function which we will use in service layer for converting audio to text functionality.
+
+        ```js
+        export async function speechToTextAPI(audioUrl) {
+        try {
+            const transcript = await client.transcripts.transcribe({
+                audio: audioUrl,
+                speech_model: "universal", 
+            });
+
+            return transcript.text;
+        } catch (error) {
+            console.error("AssemblyAI SDK Error:", error.message);
+            throw new Error("Failed to transcribe audio");
+        }
+        }
+        ```
+
+    * now this function sppechToTextAPI accepts a parameter audioUrl → which should be a public link to the audio (from Cloudinary or somewhere else in cloud).
+    * since the function is async in nature because calling an API is asynchronous task.
+
+        ```js
+        const transcript = await client.transcripts.transcribe({
+            audio: audioUrl,
+            speech_model: "universal"
+        });
+        ```
+
+    * this line has the transcribed logic and if transcribed is successful then it return the response as transcribed text else it will throw error.
+
+  * this is how we can setup the assembly ai api and convert our audio into text.
+
+    ---
+
+* after this we will create - controller -- (that will accept the request) and then send it to the service layer (which has logic - mainly to call our speechToTextAPI function) and then repository to save the transcribed text in db.
+* *we did not have to store audio in db because its already saved in cloudinary*
+* so overall flow will be like this- ---
+
+    ```bash
+    Request → Router → Controller → Service (logic to convert audio into text) → Repository (save the transcribed text into db) → DB
+    ```
+
+---
