@@ -160,3 +160,15 @@
     export default upload;
 
     ```
+
+---
+
+* now creating the transcription schema -- and check it later -- if we are using clerk so do we need to create the schema for user or not ?
+
+* now creating the routes - the api endpoint will be like -- http//:localhost/portNumber/api/upload -- for uploading audio and to get past transcription -- /api/history
+
+* now the routes are created and our backend flow is like this -->
+
+    ```bash
+    Request → Router → Controller → Service → Repository → DB
+    ```
