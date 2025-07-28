@@ -14,20 +14,23 @@
  */
 
 import express from 'express';
+import upload from '../middleware/multer.js';
+import { validateAudioUpload } from '../validations/audioValidations.js';
+import { uploadAudio } from '../controller/audioController.js';
 
 const audioRouter=express.Router();
 
 // upload the audio -- or recored audio will be also come in file format -- we will mae sure in frontend..
 // to upload the audio 
-audioRouter.post('/upload');
+audioRouter.post('/upload',upload.single('audio'), validateAudioUpload,uploadAudio);
 
 // to show all past audio and transcription
-audioRouter.get('/history');
+// audioRouter.get('/history');
 
 // to update audio -- like title - check later needed or not
-audioRouter.put('/:id');
+// audioRouter.put('/:id');
 
 // to delete the audio 
-audioRouter.delete('/:id');
+// audioRouter.delete('/:id');
 
 export default audioRouter;

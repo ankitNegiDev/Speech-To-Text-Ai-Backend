@@ -1,7 +1,7 @@
 // creating the api routes
 
 import express from 'express';
-import audioRouter from './audioRoutes';
+import audioRouter from './audioRoutes.js';
 
 const apiRouter=express.Router();
 

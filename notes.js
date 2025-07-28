@@ -11,3 +11,10 @@
 // scrimba
 // https://scrimba.com/home
 
+
+
+/**
+ * If we are using Clerk or any custom middleware that attaches user data to req.user, then:
+If req.user.id is a string (like Clerk's user ID), then: Use req.user.id
+If we are using our own Mongoose-based auth system, and req.user comes from MongoDB, then req.user._id is the correct one.
+ */

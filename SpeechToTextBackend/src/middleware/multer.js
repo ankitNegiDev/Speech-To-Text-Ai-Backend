@@ -19,6 +19,7 @@ const storage = new CloudinaryStorage({
 });
 
 // checking for file types -- any invalid file type upload will not be allowed
+// MIME type (Multipurpose Internet Mail Extensions) tells what type of file is being uploaded.
 const fileFilter = function (req, file, cb) {
     const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/webm'];
     if (allowedTypes.includes(file.mimetype)) {
