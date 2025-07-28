@@ -2,30 +2,30 @@
 
 * first i am starting with backend once my backend is done then i can start with a simple ui that have upload audio functionality and show the text of uploaded audio that's it...
 
-```text
-Frontend
-│
-├─ Record or upload the audio file
-│
-├─  Using POST → /upload (FormData) sends the audio file to backend server
-│
-Backend (Express)
-│
-├─ multer parses audio file → req.file
-│
-├─ Send audio to Speech-to-Text API or if we want we can save audio to db.
-│
-├─ Receive transcription from speech text api
-│
-├─ Transcribe is saved to DB (speech is now converted to text)
-│
-└─ our sever then respond with transcription
-│
-Frontend
-├─ Display transcription to user
-├─ Show transcription history (optional)
+    ```text
+    Frontend
+    │
+    ├─ Record or upload the audio file
+    │
+    ├─  Using POST → /upload (FormData) sends the audio file to backend server
+    │
+    Backend (Express)
+    │
+    ├─ multer parses audio file → req.file
+    │
+    ├─ Send audio to Speech-to-Text API or if we want we can save audio to db.
+    │
+    ├─ Receive transcription from speech text api
+    │
+    ├─ Transcribe is saved to DB (speech is now converted to text)
+    │
+    └─ our sever then respond with transcription
+    │
+    Frontend
+    ├─ Display transcription to user
+    ├─ Show transcription history (optional)
 
-```
+    ```
 
 * this is how overall flow will go.
 
