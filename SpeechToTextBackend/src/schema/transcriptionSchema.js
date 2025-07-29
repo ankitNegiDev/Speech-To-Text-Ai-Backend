@@ -11,10 +11,15 @@ const transcriptionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:false // just becasue of guest user.
+    //! this is invalid since we are using clerk so we will get error in populate-
+    // userId:{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:'User',
+    //     required:false // just becasue of guest user.
+    // }
+    userId: {
+        type: String, // Clerk user ID
+        required: false // just because of guest user.
     }
 },{timestamps:true});
 

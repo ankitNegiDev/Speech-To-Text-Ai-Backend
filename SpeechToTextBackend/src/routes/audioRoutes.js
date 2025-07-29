@@ -4,25 +4,33 @@
  */
 
 /**
-  * POST /api/audio/upload → Upload audio (recorded or file)
+POST /api/audio/upload — Upload & transcribe (guest + auth)
 
-  * GET /api/audio/history → Get all transcriptions for a user
+GET /api/audio/:id — Get a specific transcription
 
-  * PUT /api/audio/:id → Update transcription/audio info (optional)
+PUT /api/audio/:id — Update transcript (auth only)
 
-  * DELETE /api/audio/:id → Delete audio + transcription
+DELETE /api/audio/:id —  Delete (auth only)
+
+GET /api/audio/history —  Fetch user's history (auth only)
+
+POST /api/audio/:id/translate —  Translate transcript
+
  */
 
 import express from 'express';
 import upload from '../middleware/multer.js';
 import { validateAudioUpload } from '../validations/audioValidations.js';
-import { uploadAudio } from '../controller/audioController.js';
+import { getSingleTranscriptionById, uploadAudio } from '../controller/audioController.js';
 
 const audioRouter=express.Router();
 
 // upload the audio -- or recored audio will be also come in file format -- we will mae sure in frontend..
 // to upload the audio 
 audioRouter.post('/upload',upload.single('audio'), validateAudioUpload,uploadAudio);
+
+// to get a specific transcritpion
+// audioRouter.get('/:id',getSingleTranscriptionById);
 
 // to show all past audio and transcription
 // audioRouter.get('/history');

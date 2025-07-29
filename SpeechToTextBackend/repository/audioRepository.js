@@ -1,5 +1,6 @@
 // audio repository -- all db realted task will be done here..
 
+import mongoose from "mongoose";
 import { Transcription } from "../src/schema/transcriptionSchema.js";
 const guestTranscriptions = [];
 // this is for loged in user.
@@ -50,7 +51,25 @@ export async function findTranscriptionByAudioUrl(audioUrl,userId){
             return response;
         }
     }catch(error){
-        console.error("Repository: findTranscriptionByAudioUrl failed", error);
+        console.log("Repository: findTranscriptionByAudioUrl failed", error);
         throw error;
+    }
+}
+
+// get single transcription by id 
+
+export async function getSingleTranscriptionByIdRepository(transcriptionId){
+    try{
+        // since transcription id will be created by mongoose so we need to validate it --
+        if(!mongoose.Types.ObjectId.isValid(transcriptionId)){
+            const error = new Error("Invalid transcription ID format");
+            error.status=400;
+            throw error;
+        }
+        const response=await Transcription.findById(transcriptionId);
+        return response;
+    }catch(error){
+        console.log("error occur in getsingle transcription by id in repository layer : ",error);
+        throw error; // throwing error to controller.
     }
 }
