@@ -1,8 +1,8 @@
 // audio repository -- all db realted task will be done here..
 
 import mongoose from "mongoose";
-import { Transcription } from "../src/schema/transcriptionSchema.js";
-import { TranslationCache } from "../src/schema/translationSchema.js";
+import { Transcription } from "../schema/transcriptionSchema.js";
+import { TranslationCache } from "../schema/translationSchema.js";
 const guestTranscriptions = [];
 // this is for loged in user.
 export async function saveTranscriptionToDB(userId,audioUrl,transcriptionText){
