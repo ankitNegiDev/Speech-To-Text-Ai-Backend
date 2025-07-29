@@ -1,6 +1,6 @@
 // service -- handel main logic
 
-import { findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, updateTranscriptionRepository } from "../../repository/audioRepository.js";
+import { deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, updateTranscriptionRepository } from "../../repository/audioRepository.js";
 import { speechToTextAPI } from "../utils/speechToText.js";
 
 // (1) upload audio and save transcription to db
@@ -71,5 +71,46 @@ export async function updateTranscriptionService(transcriptionId,userId,updatePa
     }catch(error){
         console.log("erorr occured in update transcription in service layer and error is : ",error);
         throw error; // throwing error to service.
+    }
+}
+
+
+// (4) deleteTranscriptionService
+
+export async function deleteTranscriptionService(transcriptionId,userId){
+    try{
+        // first we need the transcription right then only we will delete it -- so we will get transcriion by id.
+        const transcription=await getSingleTranscriptionByIdRepository(transcriptionId);
+
+        if(!transcription){
+            const error = new Error("Transcription not found");
+            error.status=404;
+            throw error;
+        }
+
+        // checking ownership
+        if(transcription.userId && transcription.userId !== userId){
+            const error = new Error("You are not authorized to delete this transcription");
+            error.status=403;
+            throw error;
+        }
+
+        const deletedTranscription = await deleteTranscriptionRepository(transcriptionId);
+        return deletedTranscription;
+    }catch(error){
+        console.log("Error in deleteTranscriptionService:", error);
+        throw error; // throwing error back to controller.
+    }
+}
+
+// (5) getTranscriptionHistoryService
+
+export async function getTranscriptionHistoryService(userId){
+    try{
+        const history = await getTranscriptionHistoryRepository(userId);
+        return history;
+    }catch(error){
+        console.log("Error in getTranscriptionHistoryRepository:", error);
+        throw error; // trhwoing error back to controller
     }
 }

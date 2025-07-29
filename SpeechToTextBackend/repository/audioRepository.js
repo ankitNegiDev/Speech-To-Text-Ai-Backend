@@ -105,3 +105,28 @@ export async function updateTranscriptionRepository(transcription,updatePayload)
         throw error; // throwing error to service layer.
     }
 }
+
+
+// (4) deleteTranscriptionRepository 
+
+export async function deleteTranscriptionRepository(transcriptionId){
+    try{
+        const deletedTranscription=await Transcription.findByIdAndDelete(transcriptionId);
+        return deletedTranscription;
+    }catch(error){
+        console.log("Error in deleteTranscriptionRepository:", error);
+        throw error; // throwing error back to service layer.
+    }
+}
+
+//(5) getTranscriptionHistoryRepository
+
+export async function getTranscriptionHistoryRepository(userId){
+    try{
+        const transcriptions = await Transcription.find({ userId }).sort({ createdAt: -1 }); // this will find first all the trasncription which has given userId and then sort based on createdAt measn latest transcription will be at top and so on -- oldest will be at bottom.
+        return transcriptions;
+    }catch(error){
+        console.log("Error in getTranscriptionHistoryRepository:", error);
+        throw error; // throwing error to sercive
+    }
+}

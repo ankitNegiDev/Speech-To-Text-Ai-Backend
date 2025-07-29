@@ -1,6 +1,6 @@
 // audio controller
 
-import { getSingleTranscriptionByIdService, updateTranscriptionService, uploadAudioService } from "../services/audioService.js";
+import { deleteTranscriptionService, getSingleTranscriptionByIdService, getTranscriptionHistoryService, updateTranscriptionService, uploadAudioService } from "../services/audioService.js";
 
 /**
  * see guest user can also upload the audio  and see the history -- if avialbe -- 
@@ -95,5 +95,65 @@ export async function updateTranscriptionController(req,res){
             success:false,
             message: error.message || "Internal server error"
         })
+    }
+}
+
+// (4) delete transcription
+
+export async function deleteTranscriptionController(req,res){
+    try{
+        const transcriptionId=req.params.id;
+        const userId = req.user?.id || null; // this userId will be given by clerk.
+        const deletedTranscription = await deleteTranscriptionService(transcriptionId,userId);
+
+        return res.status(200).json({
+            success:true,
+            message: "Transcription deleted successfully",
+            data: deletedTranscription
+        });
+    }catch(error){
+        console.log("Error in deelteTranscriptionController:", error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal server error"
+        })
+    }
+}
+
+// (5) getTranscriptionHistoryController
+
+export async function getTranscriptionHistoryController(req,res){
+    try{
+        const userId = req.user?.id || null; // this userId will be given by clerk.
+        // checking if userId is present or not..
+        if (!userId) {
+            const error = new Error("User ID is required to fetch history");
+            error.status = 400;
+            throw error;
+        }
+        const history = await getTranscriptionHistoryService (userId);
+
+        // now here we need to check right -- since history will contain an array of object -- (each object is a transcription data) so if length is 0 then it means request-response cycle is done but there is no history yet for current user.
+
+        if(history.length<=0){
+            return res.status(200).json({
+                success: true,
+                message: "No transcription history yet.",
+                data: [],
+            })
+        }
+        // else -- send valid resoponse.
+        return res.status(200).json({
+            success:true,
+            message: "Transcription history fetched successfully",
+            data: history
+        });
+
+    }catch(error){
+        console.log("Error in getTranscriptionHistoryController:", error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal server error"
+        });
     }
 }
