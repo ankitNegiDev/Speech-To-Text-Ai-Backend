@@ -56,7 +56,7 @@ export async function findTranscriptionByAudioUrl(audioUrl,userId){
     }
 }
 
-// get single transcription by id 
+//(2) get single transcription by id 
 
 export async function getSingleTranscriptionByIdRepository(transcriptionId){
     try{
@@ -71,5 +71,37 @@ export async function getSingleTranscriptionByIdRepository(transcriptionId){
     }catch(error){
         console.log("error occur in getsingle transcription by id in repository layer : ",error);
         throw error; // throwing error to controller.
+    }
+}
+
+// (3) updateTranscriptionRepository
+
+export async function updateTranscriptionRepository(transcription,updatePayload){
+    try{
+        const { newText, newTags, reviewed }=updatePayload;
+        if(newText && newText !== transcription.text){
+            // it means user did some changes in text and we need to add the edit history.
+            transcription.editHistory.push({
+                previousText: transcription.text,
+                editedAt: new Date()
+            });
+            // now updating the transcription text.
+            transcription.text=newText;
+        }
+
+        // similary if newTags is array of tags then update it also 
+        if (Array.isArray(tags)) {
+            transcription.tags = newTags;
+        }
+
+        // similary if user has reviewed and it is a boolean value then update it accordingly.
+        if (typeof reviewed === "boolean") {
+            transcription.reviewed = reviewed;
+        }
+        await transcription.save(); // saving the trasncription in db and returning it to service layer.
+        return transcription;
+    }catch(error){
+        console.log("erorr occured in update trasncition in repository layer",error);
+        throw error; // throwing error to service layer.
     }
 }

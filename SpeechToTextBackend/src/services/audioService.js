@@ -1,8 +1,9 @@
 // service -- handel main logic
 
-import { findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB } from "../../repository/audioRepository.js";
+import { findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, updateTranscriptionRepository } from "../../repository/audioRepository.js";
 import { speechToTextAPI } from "../utils/speechToText.js";
 
+// (1) upload audio and save transcription to db
 export async function uploadAudioService(audioUrl,userId){
     try{
 
@@ -30,7 +31,7 @@ export async function uploadAudioService(audioUrl,userId){
     }
 }
 
-// get single transcription by id 
+// (2) get single transcription by id 
 
 export async function getSingleTranscriptionByIdService(transcritpionId){
     try{
@@ -44,5 +45,31 @@ export async function getSingleTranscriptionByIdService(transcritpionId){
     }catch(error){
         console.log("sorry error occured in getSingleTranscriptionById in service layer : ",error);
         throw error; // throwing error back to controller.
+    }
+}
+
+// (3) edit/update transcription
+
+export async function updateTranscriptionService(transcriptionId,userId,updatePayload){
+    try{
+        // first get the transcription -- using transcription id then only we will update that transcription
+        const transcription=await getSingleTranscriptionByIdRepository(transcriptionId);
+        if(!transcription){
+            const error = new Error('Transcription not found');
+            error.status=404;
+            throw error;
+        }
+
+        // only owner can -- update the transcription -- this is kind of backend validation although in frontend we will protect our route so that any unauthorized user does not see update transcription option.. but if anyone that directly hit our api then we need handel that.
+        if(transcription.userId && transcription.userId !== userId){
+            const error = new Error("Unauthorized: You can only update your own transcription.");
+            error.status=403;
+            throw error;
+        }
+        const updatedResponse = await updateTranscriptionRepository(transcription,updatePayload);
+        return updatedResponse;
+    }catch(error){
+        console.log("erorr occured in update transcription in service layer and error is : ",error);
+        throw error; // throwing error to service.
     }
 }

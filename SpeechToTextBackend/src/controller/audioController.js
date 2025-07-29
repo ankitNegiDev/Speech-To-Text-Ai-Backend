@@ -1,6 +1,6 @@
 // audio controller
 
-import { getSingleTranscriptionByIdService, uploadAudioService } from "../services/audioService.js";
+import { getSingleTranscriptionByIdService, updateTranscriptionService, uploadAudioService } from "../services/audioService.js";
 
 /**
  * see guest user can also upload the audio  and see the history -- if avialbe -- 
@@ -67,3 +67,33 @@ export async function getSingleTranscriptionById(req,res){
 
 
 // (3) update transcription
+
+/**
+ * when a put request hit on -- > PUT /api/audio/:id then frontend will send this kind of request body.
+    {
+        "text": "Updated transcription text...",
+        "tags": ["client", "meeting", "project"],
+        "reviewed": true
+    }
+
+ */
+export async function updateTranscriptionController(req,res){
+    try{
+        const transcriptionId=req.params.id;
+        const userId = req.user?.id || null; // this userId will be given by clerk.
+        const updatePayload=req.body; // this is what frontend will send.
+        const updatedResponse = await updateTranscriptionService(transcriptionId,userId,updatePayload);
+        return res.status(200).json({
+            success:true,
+            message:"Transcription updated successfully",
+            data:updatedResponse
+        });
+
+    }catch(error){
+        console.log("Error in updateTranscriptionController:", error);
+        return res.status(error.status || 500).json({
+            success:false,
+            message: error.message || "Internal server error"
+        })
+    }
+}

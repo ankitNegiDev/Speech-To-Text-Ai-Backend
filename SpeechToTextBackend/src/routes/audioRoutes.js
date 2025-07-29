@@ -21,7 +21,7 @@ POST /api/audio/:id/translate —  Translate transcript
 import express from 'express';
 import upload from '../middleware/multer.js';
 import { validateAudioUpload } from '../validations/audioValidations.js';
-import { getSingleTranscriptionById, uploadAudio } from '../controller/audioController.js';
+import { getSingleTranscriptionById, updateTranscriptionController, uploadAudio } from '../controller/audioController.js';
 
 const audioRouter=express.Router();
 
@@ -32,13 +32,19 @@ audioRouter.post('/upload',upload.single('audio'), validateAudioUpload,uploadAud
 // to get a specific transcritpion
 // audioRouter.get('/:id',getSingleTranscriptionById);
 
+
+// to update audio -- like title - check later needed or not
+// audioRouter.put('/:id',updateTranscriptionController); //! need to add clerk auth middlewware
+
+
+// to delete the audio
+// audioRouter.delete('/:id');
+
 // to show all past audio and transcription
 // audioRouter.get('/history');
 
-// to update audio -- like title - check later needed or not
-// audioRouter.put('/:id');
 
-// to delete the audio 
-// audioRouter.delete('/:id');
+
+
 
 export default audioRouter;
