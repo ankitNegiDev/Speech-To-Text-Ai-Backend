@@ -1,4 +1,4 @@
 # Ignore all node_modules in the project, including nested ones
 **/node_modules
 example.txt
-.env
+# .env
