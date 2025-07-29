@@ -332,3 +332,9 @@ and then create  a frontend
     | **Add/Edit Tags**           | The user can attach tags (like `["meeting", "summary"]`) to organize their transcriptions.                                    |
     | **Mark as Reviewed**         | The user can toggle a `reviewed` flag (true/false) to indicate whether they’ve reviewed/finalized the transcription.          |
     | **Edit History**             | We store a version history of the `text` field. Each time the text is updated, we keep the previous version with a timestamp. |
+
+---
+
+* ## Deelete trasncription
+
+  * now to delete trasncription first we need to get the transcription from db and then delete it.
