@@ -322,3 +322,13 @@ and then create  a frontend
 
 ---
 
+* ## Edit transcription
+
+  * now in edit transcription - we will give following features
+
+    | Feature                        | Description                                                                                                                   |
+    | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+    | **Edit Transcription Text** | The user can update the transcription text (e.g., fix errors or modify sentences).                                            |
+    | **Add/Edit Tags**           | The user can attach tags (like `["meeting", "summary"]`) to organize their transcriptions.                                    |
+    | **Mark as Reviewed**         | The user can toggle a `reviewed` flag (true/false) to indicate whether they’ve reviewed/finalized the transcription.          |
+    | **Edit History**             | We store a version history of the `text` field. Each time the text is updated, we keep the previous version with a timestamp. |

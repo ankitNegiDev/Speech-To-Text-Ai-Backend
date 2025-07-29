@@ -20,7 +20,26 @@ const transcriptionSchema = new mongoose.Schema({
     userId: {
         type: String, // Clerk user ID
         required: false // just because of guest user.
-    }
+    },
+
+    // extra for edit functionality
+    tags: {
+        type: [String],
+        default: []
+    },
+    reviewed: {
+        type: Boolean,
+        default: false
+    },
+    editHistory: [
+        {
+            previousText: String,
+            editedAt: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ]
 },{timestamps:true});
 
 // creating the Transcription collection using transcriptionSchema
