@@ -21,7 +21,7 @@ POST /api/audio/:id/translate —  Translate transcript
 import express from 'express';
 import upload from '../middleware/multer.js';
 import { validateAudioUpload } from '../validations/audioValidations.js';
-import { deleteTranscriptionController, getSingleTranscriptionById, getTranscriptionHistoryController, updateTranscriptionController, uploadAudio } from '../controller/audioController.js';
+import { deleteTranscriptionController, getSingleTranscriptionById, getTranscriptionHistoryController, translateTranscriptionController, updateTranscriptionController, uploadAudio } from '../controller/audioController.js';
 import { generalLimiter, strictLimiter } from '../middleware/rateLimiter.js';
 
 const audioRouter=express.Router();
@@ -46,7 +46,7 @@ audioRouter.post('/upload', strictLimiter,upload.single('audio'), validateAudioU
 // audioRouter.get('/history',generalLimiter,getTranscriptionHistoryController); //! need to add clerk -- guest user is not allowed to see history..
 
 // to translate transcribed text -- 
-
+// audioRouter.post('/:id/translate',strictLimiter,translateTranscriptionController) // no auth guest user can do this.
 
 
 

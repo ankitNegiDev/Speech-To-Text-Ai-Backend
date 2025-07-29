@@ -1,7 +1,8 @@
 // service -- handel main logic
 
-import { deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, updateTranscriptionRepository } from "../../repository/audioRepository.js";
+import { checkTranslationCache, deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, saveTranslationToCache, updateTranscriptionRepository } from "../../repository/audioRepository.js";
 import { speechToTextAPI } from "../utils/speechToText.js";
+import { translateTextViaLibre } from "../utils/translationUtil.js";
 
 // (1) upload audio and save transcription to db
 export async function uploadAudioService(audioUrl,userId){
@@ -112,5 +113,37 @@ export async function getTranscriptionHistoryService(userId){
     }catch(error){
         console.log("Error in getTranscriptionHistoryRepository:", error);
         throw error; // trhwoing error back to controller
+    }
+}
+
+// (6)  translateTranscriptionService
+
+export async function translateTranscriptionService(transcriptionId,targetLanguage,userId){
+    try{
+        // get the transcription.
+        const transcription = await getSingleTranscriptionByIdRepository(transcriptionId);
+        if (!transcription) {
+            const error = new Error("Transcription not found");
+            error.status = 404;
+            throw error;
+        }
+        const originalText=transcription.text;
+
+        // now we need to check for cach -- like we will check in db is translation of this text is present or not .
+        const cached = await checkTranslationCache(originalText, targetLanguage);
+        if(cached){
+            return cached;
+        }// else -- we will call api to translate the text.
+
+        // Translating using LibreTranslate
+        const translatedText = await translateTextViaLibre(originalText, targetLanguage);
+
+        // once the translation is done then we will save it to db for next time caching if same text 
+        const savedTranslation = await saveTranslationToCache(originalText, targetLanguage, translatedText, userId);
+
+        return savedTranslation;
+
+    }catch(error){
+
     }
 }

@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 import { Transcription } from "../src/schema/transcriptionSchema.js";
+import { TranslationCache } from "../src/schema/translationSchema.js";
 const guestTranscriptions = [];
 // this is for loged in user.
 export async function saveTranscriptionToDB(userId,audioUrl,transcriptionText){
@@ -129,4 +130,29 @@ export async function getTranscriptionHistoryRepository(userId){
         console.log("Error in getTranscriptionHistoryRepository:", error);
         throw error; // throwing error to sercive
     }
+}
+
+// (6) translation repositiory functions..
+
+//(6 a) - checkTranslationCache -- here we will check is translated text present in db or not .
+
+export async function checkTranslationCache(originalText,targetLang){
+    try{
+        const response = await TranslationCache.findOne({ originalText, targetLang });
+        return response;
+    }catch(error){
+        console.log("erorr occured in check translation cache in repository : ",error);
+        throw error; // throwing erro back to service latyer.
+    }
+}
+
+// (6 b) - saveTranslationToCache -- here we will save the transalation into db for future caching.
+export async function saveTranslationToCache(originalText, targetLang, translatedText, userId) {
+    const newEntry = await TranslationCache.create({
+        originalText,
+        targetLang,
+        translatedText,
+        userId
+    });
+    return newEntry;
 }

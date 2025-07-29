@@ -1,6 +1,6 @@
 // audio controller
 
-import { deleteTranscriptionService, getSingleTranscriptionByIdService, getTranscriptionHistoryService, updateTranscriptionService, uploadAudioService } from "../services/audioService.js";
+import { deleteTranscriptionService, getSingleTranscriptionByIdService, getTranscriptionHistoryService, translateTranscriptionService, updateTranscriptionService, uploadAudioService } from "../services/audioService.js";
 
 /**
  * see guest user can also upload the audio  and see the history -- if avialbe -- 
@@ -151,6 +151,29 @@ export async function getTranscriptionHistoryController(req,res){
 
     }catch(error){
         console.log("Error in getTranscriptionHistoryController:", error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Internal server error"
+        });
+    }
+}
+
+// (6) translateTranscriptionController
+
+export async function translateTranscriptionController(req,res){
+    try{
+        const transcriptionId=req.params.id;
+        const {targetLanguage}=req.body;
+        const userId = req.user?.id || null; // this will be injected by clerk auth middle ware automatically.
+
+        const translatedData = await translateTranscriptionService(transcriptionId, targetLanguage, userId);
+        return res.status(200).json({
+            success:true,
+            message:"Translation successful",
+            data:translatedData
+        });
+    }catch(error){
+        console.error("Error in translateTranscriptionController:", error);
         return res.status(error.status || 500).json({
             success: false,
             message: error.message || "Internal server error"
