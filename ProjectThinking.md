@@ -368,3 +368,14 @@ and then create  a frontend
             ➤ Yes: Return it
             ➤ No: Call LibreTranslate → store → return
     ```
+
+---
+
+## Frontend
+
+* now we are left with the frontend and clerk.
+
+* ## task left
+
+  * setup basic react app - using vite and tailwind css , and see how we can setup the clerk and fix where we need to use clerk auth in backend and -- check docs.
+  * second - is frontend part is left -- core part --
