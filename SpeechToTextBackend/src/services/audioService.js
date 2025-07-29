@@ -144,6 +144,7 @@ export async function translateTranscriptionService(transcriptionId,targetLangua
         return savedTranslation;
 
     }catch(error){
-
+        console.log("Error in translateTranscriptionService:", error);
+        throw error;
     }
 }

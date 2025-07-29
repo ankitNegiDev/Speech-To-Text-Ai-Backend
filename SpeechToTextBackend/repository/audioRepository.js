@@ -8,9 +8,9 @@ const guestTranscriptions = [];
 export async function saveTranscriptionToDB(userId,audioUrl,transcriptionText){
     try{
         const response = await Transcription.create({
-            user:userId,
+            userId,
             audioUrl,
-            text
+            text:transcriptionText
         });
         return response;
     }catch(error){
@@ -45,7 +45,7 @@ see assume first time user send post request and again he send same so we don't 
 export async function findTranscriptionByAudioUrl(audioUrl,userId){
     try{
         if(userId){
-            const response=await Transcription.findOne({audioUrl,user:userId});
+            const response=await Transcription.findOne({audioUrl,userId});
             return response;
         }else{
             const response=await Transcription.findOne({audioUrl,user:null});
@@ -91,7 +91,7 @@ export async function updateTranscriptionRepository(transcription,updatePayload)
         }
 
         // similary if newTags is array of tags then update it also 
-        if (Array.isArray(tags)) {
+        if (Array.isArray(newTags)) {
             transcription.tags = newTags;
         }
 
