@@ -22,29 +22,30 @@ import express from 'express';
 import upload from '../middleware/multer.js';
 import { validateAudioUpload } from '../validations/audioValidations.js';
 import { deleteTranscriptionController, getSingleTranscriptionById, getTranscriptionHistoryController, updateTranscriptionController, uploadAudio } from '../controller/audioController.js';
+import { generalLimiter, strictLimiter } from '../middleware/rateLimiter.js';
 
 const audioRouter=express.Router();
 
 // upload the audio -- or recored audio will be also come in file format -- we will mae sure in frontend..
 // to upload the audio 
-audioRouter.post('/upload',upload.single('audio'), validateAudioUpload,uploadAudio);
+audioRouter.post('/upload', strictLimiter,upload.single('audio'), validateAudioUpload,uploadAudio);
 
 // to get a specific transcritpion
-// audioRouter.get('/:id',getSingleTranscriptionById);
+// audioRouter.get('/:id',generalLimiter,getSingleTranscriptionById);
 
 
 // to update audio -- like title - check later needed or not
-// audioRouter.put('/:id',updateTranscriptionController); //! need to add clerk auth middlewware
+// audioRouter.put('/:id',generalLimiter,updateTranscriptionController); //! need to add clerk auth middlewware
 //? example like this ===>  router.delete('/audio/:id', requireAuth(), deleteTranscriptionController);
 
 
 // to delete the audio
-// audioRouter.delete('/:id',deleteTranscriptionController); //! need to add clerk auth middleware.. 
+// audioRouter.delete('/:id',generalLimiter,deleteTranscriptionController); //! need to add clerk auth middleware.. 
 
 // to show all past audio and transcription
-// audioRouter.get('/history',getTranscriptionHistoryController); //! need to add clerk -- guest user is not allowed to see history..
+// audioRouter.get('/history',generalLimiter,getTranscriptionHistoryController); //! need to add clerk -- guest user is not allowed to see history..
 
-// 
+// to translate transcribed text -- 
 
 
 

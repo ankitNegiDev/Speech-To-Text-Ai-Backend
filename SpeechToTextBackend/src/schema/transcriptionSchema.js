@@ -44,3 +44,4 @@ const transcriptionSchema = new mongoose.Schema({
 
 // creating the Transcription collection using transcriptionSchema
 export const Transcription = mongoose.model('Transcription', transcriptionSchema);
+
