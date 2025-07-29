@@ -349,3 +349,22 @@ and then create  a frontend
   * **Rate limiter in backend**
   * now we will apply a rate limitter so that we don't get error like too many request when we will deploy our code.
   * so for this we will use `express-rate-limit` this package and create a middleware and then protect our routes.
+
+---
+
+* ## why we are creating a backend route if have a public endpoint for translating the text ?
+
+  * the reason we are creating a api end point is because see suppose there is user 1 and he translate the text from english to hindi and suppose there is another user2 and he also translate the same text from english to hindi see here we are calling translate api two time -- it would be better if we cach the result and prevent the api calls so for caching in backend we need to create a schema for translation - and any user which does translation we will store it in backend and when again that user or any other user does same text translation we will check first in db is this text translation exit or not if exist then we won't hit the api calls and else we have to hit. by doing this we save the 1 api calls or even more -- but keep in mind we also interduced one db operation.
+
+  * the flow will be like -
+
+    ```bash
+    1. Frontend → POST /api/audio/:id/translate
+
+    2. Backend → In controller:
+    ⬇
+    a. Check MongoDB: 
+        Is (originalText + sourceLang + targetLang) already translated?
+            ➤ Yes: Return it
+            ➤ No: Call LibreTranslate → store → return
+    ```
