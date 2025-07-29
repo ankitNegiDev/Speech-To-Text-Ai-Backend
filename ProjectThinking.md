@@ -338,3 +338,14 @@ and then create  a frontend
 * ## Deelete trasncription
 
   * now to delete trasncription first we need to get the transcription from db and then delete it.
+
+---
+
+* ## Now we are giving a functionality to user that they can translate the transcription into any other langauge
+
+  * for this we will be using a free api libretranslate
+  * but if we are using the public instance then we need to add  a client-side throttling (e.g 1 request per second max) to avoid being blocked or exhausted rate limit.
+
+  * **Rate limiter in backend**
+  * now we will apply a rate limitter so that we don't get error like too many request when we will deploy our code.
+  * so for this we will use `express-rate-limit` this package and create a middleware and then protect our routes.
