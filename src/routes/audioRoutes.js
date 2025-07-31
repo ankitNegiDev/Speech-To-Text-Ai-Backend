@@ -23,30 +23,36 @@ import upload from '../middleware/multer.js';
 import { validateAudioUpload } from '../validations/audioValidations.js';
 import { deleteTranscriptionController, getSingleTranscriptionById, getTranscriptionHistoryController, translateTranscriptionController, updateTranscriptionController, uploadAudio } from '../controller/audioController.js';
 import { generalLimiter, strictLimiter } from '../middleware/rateLimiter.js';
+import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
+import { multerErrorHandler } from '../middleware/multerErrorHandler.js';
 
 const audioRouter=express.Router();
 
 // upload the audio -- or recored audio will be also come in file format -- we will mae sure in frontend..
 // to upload the audio 
-audioRouter.post('/upload', strictLimiter,upload.single('audio'), validateAudioUpload,uploadAudio);
+audioRouter.post('/upload', ClerkExpressWithAuth(), upload.single('audio'), multerErrorHandler, validateAudioUpload,uploadAudio);
+
+// audioRouter.post('/upload', upload.single('audio'), multerErrorHandler, validateAudioUpload, uploadAudio);
+
+// to show all past audio and transcription
+audioRouter.get('/history', ClerkExpressWithAuth(),getTranscriptionHistoryController); //! need to add clerk -- guest user is not allowed to see history..
+
 
 // to get a specific transcritpion
-// audioRouter.get('/:id',generalLimiter,getSingleTranscriptionById);
+audioRouter.get('/:id', generalLimiter, ClerkExpressWithAuth(),getSingleTranscriptionById);
 
 
 // to update audio -- like title - check later needed or not
-// audioRouter.put('/:id',generalLimiter,updateTranscriptionController); //! need to add clerk auth middlewware
+audioRouter.put('/:id',ClerkExpressWithAuth(),updateTranscriptionController); //! need to add clerk auth middlewware
 //? example like this ===>  router.delete('/audio/:id', requireAuth(), deleteTranscriptionController);
 
 
 // to delete the audio
-// audioRouter.delete('/:id',generalLimiter,deleteTranscriptionController); //! need to add clerk auth middleware.. 
+audioRouter.delete('/:id',ClerkExpressWithAuth(),deleteTranscriptionController); //! need to add clerk auth middleware.. 
 
-// to show all past audio and transcription
-// audioRouter.get('/history',generalLimiter,getTranscriptionHistoryController); //! need to add clerk -- guest user is not allowed to see history..
 
 // to translate transcribed text -- 
-// audioRouter.post('/:id/translate',strictLimiter,translateTranscriptionController) // no auth guest user can do this.
+audioRouter.post('/:id/translate',translateTranscriptionController) // no auth guest user can do this.
 
 
 

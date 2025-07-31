@@ -1,6 +1,7 @@
 // service -- handel main logic
 
-import { checkTranslationCache, deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, saveTranslationToCache, updateTranscriptionRepository } from "../../repository/audioRepository.js";
+// import { checkTranslationCache, deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, saveTranslationToCache, updateTranscriptionRepository } from "";
+import { checkTranslationCache, deleteTranscriptionRepository, findTranscriptionByAudioUrl, getSingleTranscriptionByIdRepository, getTranscriptionHistoryRepository, saveGuestTranscriptionTemp, saveTranscriptionToDB, saveTranslationToCache, updateTranscriptionRepository } from "../repository/audioRepository.js";
 import { speechToTextAPI } from "../utils/speechToText.js";
 import { translateTextViaLibre } from "../utils/translationUtil.js";
 
@@ -16,6 +17,7 @@ export async function uploadAudioService(audioUrl,userId){
 
         // converting the audio into text using assembly ai
         const transcriptionText=await speechToTextAPI(audioUrl);
+        console.log("transcritpion text is : ",transcriptionText);
         // for loged in user -- we need to save transcription on db.
         if(userId){
             const response = await saveTranscriptionToDB(userId,audioUrl,transcriptionText);
@@ -55,6 +57,7 @@ export async function updateTranscriptionService(transcriptionId,userId,updatePa
     try{
         // first get the transcription -- using transcription id then only we will update that transcription
         const transcription=await getSingleTranscriptionByIdRepository(transcriptionId);
+        console.log("transcription in update service from db is : ",transcription);
         if(!transcription){
             const error = new Error('Transcription not found');
             error.status=404;
@@ -68,6 +71,7 @@ export async function updateTranscriptionService(transcriptionId,userId,updatePa
             throw error;
         }
         const updatedResponse = await updateTranscriptionRepository(transcription,updatePayload);
+        console.log("updated resposne is : ",updatedResponse);
         return updatedResponse;
     }catch(error){
         console.log("erorr occured in update transcription in service layer and error is : ",error);
@@ -122,12 +126,14 @@ export async function translateTranscriptionService(transcriptionId,targetLangua
     try{
         // get the transcription.
         const transcription = await getSingleTranscriptionByIdRepository(transcriptionId);
+        console.log("transcription that we get for the current text that need to be translated is : ",transcription);
         if (!transcription) {
             const error = new Error("Transcription not found");
             error.status = 404;
             throw error;
         }
         const originalText=transcription.text;
+        console.log("originial text is : ",originalText);
 
         // now we need to check for cach -- like we will check in db is translation of this text is present or not .
         const cached = await checkTranslationCache(originalText, targetLanguage);
@@ -137,6 +143,7 @@ export async function translateTranscriptionService(transcriptionId,targetLangua
 
         // Translating using LibreTranslate
         const translatedText = await translateTextViaLibre(originalText, targetLanguage);
+        console.log("the translated text is : ",translatedText);
 
         // once the translation is done then we will save it to db for next time caching if same text 
         const savedTranslation = await saveTranslationToCache(originalText, targetLanguage, translatedText, userId);

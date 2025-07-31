@@ -79,7 +79,8 @@ export async function getSingleTranscriptionByIdRepository(transcriptionId){
 
 export async function updateTranscriptionRepository(transcription,updatePayload){
     try{
-        const { newText, newTags, reviewed }=updatePayload;
+        const { text:newText, tags:newTags, reviewed }=updatePayload;
+        console.log("newtext destructed from update payload is : ",newText);
         if(newText && newText !== transcription.text){
             // it means user did some changes in text and we need to add the edit history.
             transcription.editHistory.push({

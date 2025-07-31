@@ -11,16 +11,23 @@ and non-loged in user can also upload audio and see th transcription but we will
 // (1) upload audio and store audio transcription into db.
 export async function uploadAudio(req,res){
     try{
+        console.log("inside the uplaod audio controller -- ");
 
         // all validation are applied even before request reach to controller.
         const audioUrl=req.file.path;
-        const userId=req.user?.id || null; // null is for guest user.
+        // const userId=req.user?.id || null; // null is for guest user. //! this is bug -- clerkwithexpress will put userid in req.auth not in req.user
+        const userId=req.auth?.userId || null;
+        console.log("userid in controller is : ",userId);
+        // console.log("req.user is : ",req.user);
+        // console.log("req.auth is : ",req.auth);
+        console.log("File received by backend:", req.file);
         // if req.user is undefined so acces undefined.id would thrwo error but ? optional chaning return the undefined and since we are using || or logical so short circurcited
         const transcription=await uploadAudioService(audioUrl,userId);
         return res.status(200).json({
             success: true,
             message: "Audio transcribed successfully",
             transcription,
+            // audioData:audioUrl
         });
     }catch(error){
         console.log("error in upload audio in controller : ",error);
@@ -38,6 +45,7 @@ export async function getSingleTranscriptionById(req,res){
     try{
         const transcriptionId = req.params.id;
         console.log("transcription id in controller is : ",req.params.id);
+        console.log("------------------- executing in history api");
         // if no transcription id exist then why to send request to service layer--
         /*
         * no need of this -- because a api endpoint with /api/audio/id will never hit until and unless we don't provide any id -- means if will be thre and either id is invalid or valid -- if id is invalid then repository throw erro and if id is valid but no transcritpion found -- then we got error acc to it and if we found trans the we got response acc to it.
@@ -79,9 +87,13 @@ export async function getSingleTranscriptionById(req,res){
  */
 export async function updateTranscriptionController(req,res){
     try{
+        console.log("update request ");
         const transcriptionId=req.params.id;
-        const userId = req.user?.id || null; // this userId will be given by clerk.
+        console.log("transcrpiton id is : ",transcriptionId);
+        const userId = req.auth?.userId || null; // this userId will be given by clerk.
+        console.log("userid in update is : ",userId);
         const updatePayload=req.body; // this is what frontend will send.
+        console.log("update payload is : ",updatePayload);
         const updatedResponse = await updateTranscriptionService(transcriptionId,userId,updatePayload);
         return res.status(200).json({
             success:true,
@@ -102,8 +114,11 @@ export async function updateTranscriptionController(req,res){
 
 export async function deleteTranscriptionController(req,res){
     try{
+        console.log("deelte transcription request");
         const transcriptionId=req.params.id;
-        const userId = req.user?.id || null; // this userId will be given by clerk.
+        const userId = req.auth?.userId // this userId will be given by clerk.
+        console.log("user id is : ",userId);
+        console.log("transcrpiton id is : ",transcriptionId);
         const deletedTranscription = await deleteTranscriptionService(transcriptionId,userId);
 
         return res.status(200).json({
@@ -124,7 +139,8 @@ export async function deleteTranscriptionController(req,res){
 
 export async function getTranscriptionHistoryController(req,res){
     try{
-        const userId = req.user?.id || null; // this userId will be given by clerk.
+        const userId = req.auth?.userId || null; // this userId will be given by clerk.
+        console.log("userId in history controllr is : ",userId);
         // checking if userId is present or not..
         if (!userId) {
             const error = new Error("User ID is required to fetch history");
@@ -132,6 +148,7 @@ export async function getTranscriptionHistoryController(req,res){
             throw error;
         }
         const history = await getTranscriptionHistoryService (userId);
+        console.log("history reposne from service is : ",history);
 
         // now here we need to check right -- since history will contain an array of object -- (each object is a transcription data) so if length is 0 then it means request-response cycle is done but there is no history yet for current user.
 
@@ -164,7 +181,7 @@ export async function translateTranscriptionController(req,res){
     try{
         const transcriptionId=req.params.id;
         const {targetLanguage}=req.body;
-        const userId = req.user?.id || null; // this will be injected by clerk auth middle ware automatically.
+        const userId = req.auth?.id || null; // this will be injected by clerk auth middle ware automatically.
 
         const translatedData = await translateTranscriptionService(transcriptionId, targetLanguage, userId);
         return res.status(200).json({

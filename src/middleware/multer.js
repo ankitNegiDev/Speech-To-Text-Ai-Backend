@@ -13,14 +13,22 @@ const storage = new CloudinaryStorage({
     // this params object will tell how a upload will be handeled by cloudinary
     params: {
         folder: 'audio-transcriptions', // folder name 
-        resource_type: 'video', // for audio uploads in Cloudinary and  resource_type :'raw' for zip,pdf etc..
-        public_id: (req, file) => `audio-${Date.now()}`
+        resource_type: 'auto', // for audio uploads in Cloudinary and  resource_type :'raw' for zip,pdf etc..
+        // public_id: (req, file) => `audio-${Date.now()}`
+
+        public_id: (req, file) => {
+            console.log("Uploading to Cloudinary:", file.originalname);
+            console.log("📤 Cloudinary: assigning public_id to", file.originalname);
+            return `audio-${Date.now()}`;
+        },
     }
 });
 
 // checking for file types -- any invalid file type upload will not be allowed
 // MIME type (Multipurpose Internet Mail Extensions) tells what type of file is being uploaded.
 const fileFilter = function (req, file, cb) {
+    console.log("Checking file:", file.originalname, "with mimetype:", file.mimetype);
+    // console.log("request object in multer is : ",req);
     const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/webm'];
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);

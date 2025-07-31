@@ -23,10 +23,15 @@ app.use(express.urlencoded({extended:true}));
 
 app.use(cors({
     origin:[
-        "http:localhost:5173","http://127.0.0.1:5500"
+        "http://localhost:5173","http://127.0.0.1:5500"
     ],
     credentials: true
 }));
+
+app.use((req, res, next) => {
+    console.log(`[SERVER] ${req.method} ${req.path}`);
+    next();
+});
 
 app.use('/api',apiRouter);
 
@@ -40,3 +45,7 @@ app.get('/ping',function callback(req,res){
     console.log("request ping to server sucessfully");
     return res.send("<h1>hii request is pinged successfully on server </h1>");
 });
+
+
+
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Audio Upload to Backend</title>
+</head>
+<body>
+  <h1>🎤 Audio Upload Test</h1>
+
+  <input type="file" id="audioInput" accept="audio/*" />
+  <button onclick="uploadAudio()">Upload Audio</button>
+
+  <pre id="responseBox"></pre>
+
+  <script>
+    async function uploadAudio() {
+      const fileInput = document.getElementById("audioInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select an audio file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("audio", file);
+
+      try {
+        const response = await fetch("http://localhost:3000/api/audio/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById("responseBox").textContent = JSON.stringify(result, null, 2);
+      } catch (error) {
+        console.error("Upload failed:", error);
+        document.getElementById("responseBox").textContent = error.message;
+      }
+    }
+  </script>
+</body>
+</html>
