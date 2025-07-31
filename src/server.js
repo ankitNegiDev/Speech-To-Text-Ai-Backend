@@ -13,20 +13,29 @@ import apiRouter from './routes/apiRoutes.js';
 
 const app=express();
 
+// Using cors
+
+app.use(cors({
+    origin: [
+        "http://localhost:5173", "http://127.0.0.1:5500", "https://speech-to-text-ai-frontend.vercel.app"
+    ],
+    credentials: true
+}));
+
 // Inbuilt middleware
 app.use(express.json());
 app.use(express.text());
 app.use(express.urlencoded({extended:true}));
 
 
-// Using cors
+// // Using cors
 
-app.use(cors({
-    origin:[
-        "http://localhost:5173", "http://127.0.0.1:5500","https://speech-to-text-ai-frontend.vercel.app/"
-    ],
-    credentials: true
-}));
+// app.use(cors({
+//     origin:[
+//         "http://localhost:5173", "http://127.0.0.1:5500","https://speech-to-text-ai-frontend.vercel.app/"
+//     ],
+//     credentials: true
+// }));
 
 app.use((req, res, next) => {
     console.log(`[SERVER] ${req.method} ${req.path}`);
