@@ -55,6 +55,22 @@ app.get('/ping',function callback(req,res){
     return res.send("<h1>hii request is pinged successfully on server </h1>");
 });
 
+app.get('/', function callback (req, res) {
+    res.json({
+        message: "🎙️ Welcome to the Speech to Text AI Backend!",
+        status: "Running Smoothly",
+        docs: {
+            audioRoutes: "/api/audio",
+            getHistory: "/api/audio/history",
+            uploadAudio: "/api/audio/upload",
+            getSingleTranscription: "/api/audio/:id",
+            translate: "/api/audio/:id/translate"
+        },
+        note: "Visit the frontend here: https://speech-to-text-ai-frontend.vercel.app"
+    });
+});
+
+
 
 
 
