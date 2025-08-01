@@ -17,7 +17,7 @@ This backend supports:
 
 ## Live API
 
-- [live backend deployed link on render is ](https://speech-to-text-ai-backend-tm9n.onrender.com/)
+- [live backend deployed link on render is](https://speech-to-text-ai-backend-tm9n.onrender.com/)
 
 ---
 
