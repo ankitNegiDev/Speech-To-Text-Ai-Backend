@@ -127,15 +127,18 @@ Server should start on `http://localhost:5000` (or your specified port).
 
 ## 🔄 Key API Routes
 
-### Transcription
+### 🎙️ Transcription Routes
 
-- `POST /api/audio/transcribe` — Upload & transcribe audio
-- `POST /api/audio/:id/edit` — Edit transcription text
-- `GET /api/audio/history` — Fetch user's transcription history
+- `POST /api/audio/upload` — Upload audio and transcribe (supports guest + authenticated users)
+- `GET /api/audio/:id` — Get a specific transcription by ID
+- `PUT /api/audio/:id` — Update a transcription (e.g., edit title) — **auth only**
+- `DELETE /api/audio/:id` — Delete a transcription and its audio — **auth only**
+- `GET /api/audio/history` — Fetch transcription history for the logged-in user — **auth only**
 
-### Translation
+### 🌐 Translation Route
 
-- `POST /api/audio/:id/translate` — Translate transcription (with backend caching)
+- `POST /api/audio/:id/translate` — Translate a transcription using DeepL (or other APIs)  
+  > Uses **backend caching**: If the same text was translated before, it returns the cached version instead of making a new API call.
 
 ### Auth & Guest Support
 
